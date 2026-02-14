@@ -10,6 +10,7 @@ public class ThrowFruitController : MonoBehaviour
     [SerializeField] private Transform _fruitTransform;
     [SerializeField] private Transform _parentAfterThrow;
     [SerializeField] private FruitSelector _selector;
+    [SerializeField] private float _edgePadding = 0.12f;
 
     private PlayerController _playerController;
 
@@ -17,8 +18,6 @@ public class ThrowFruitController : MonoBehaviour
     private CircleCollider2D _circleCollider;
 
     public Bounds Bounds { get; private set; }
-
-    private const float EXTRA_WIDTH = 0.03f;
 
     public bool CanThrow { get; set; } = true;
 
@@ -56,11 +55,15 @@ public class ThrowFruitController : MonoBehaviour
 
     public void SpawnAFruit(GameObject fruit)
     {
-        GameObject go = Instantiate(fruit, _fruitTransform);
+        // Spawn exactly at the throw transform, ignoring any saved prefab offsets.
+        GameObject go = Instantiate(fruit, _fruitTransform.position, Quaternion.identity, _fruitTransform);
+        go.transform.localPosition = Vector3.zero;
+        go.transform.localRotation = Quaternion.identity;
+
         CurrentFruit = go;
         _circleCollider = CurrentFruit.GetComponent<CircleCollider2D>();
         Bounds = _circleCollider.bounds;
 
-        _playerController.ChangeBoundary(EXTRA_WIDTH);
+        _playerController.ChangeBoundary(_edgePadding);
     }
 }

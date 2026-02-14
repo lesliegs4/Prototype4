@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2963638770305182693}
   - component: {fileID: 2643981650069166987}
   - component: {fileID: 5451180793533248542}
+  - component: {fileID: 3068465360843721292}
   m_Layer: 0
   m_Name: 1 - blueberry
   m_TagString: Untagged
@@ -156,3 +157,15 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &3068465360843721292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1962289361211575742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ada0049e97e64739a1c8eef04f8413a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Collider
