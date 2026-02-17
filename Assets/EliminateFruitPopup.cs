@@ -164,10 +164,18 @@ public class EliminateFruitPopup : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < selector.Fruits.Length; i++)
+        List<int> presentList = new List<int>(present);
+        presentList.Sort();
+
+        Debug.Log($"{nameof(EliminateFruitPopup)}: Present fruit indices in container: {string.Join(",", presentList)}");
+
+        foreach (int fruitIndex in presentList)
         {
-            int fruitIndex = i;
-            if (!present.Contains(fruitIndex)) continue;
+            if (fruitIndex < 0 || fruitIndex >= selector.Fruits.Length)
+            {
+                Debug.LogWarning($"{nameof(EliminateFruitPopup)}: FruitIndex {fruitIndex} present but out of range for FruitSelector.Fruits (len={selector.Fruits.Length}).");
+                continue;
+            }
 
             (Sprite sprite, Color color) = GetFruitIcon(selector.Fruits[fruitIndex]);
 
@@ -187,11 +195,11 @@ public class EliminateFruitPopup : MonoBehaviour
         Transform container = ThrowFruitController.instance != null ? ThrowFruitController.instance.FruitContainer : null;
         if (container == null) return present;
 
-        for (int i = 0; i < container.childCount; i++)
+        // Scan all FruitInfo components under the container (not just direct children),
+        // since some prefabs may place FruitInfo on a nested child transform.
+        FruitInfo[] infos = container.GetComponentsInChildren<FruitInfo>(true);
+        foreach (FruitInfo info in infos)
         {
-            Transform child = container.GetChild(i);
-            if (child == null) continue;
-            FruitInfo info = child.GetComponent<FruitInfo>();
             if (info == null) continue;
             present.Add(info.FruitIndex);
         }

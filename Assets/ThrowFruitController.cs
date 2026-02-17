@@ -73,20 +73,23 @@ public class ThrowFruitController : MonoBehaviour
     {
         if (_parentAfterThrow == null) return;
 
-        int eliminated = 0;
-
-        // Iterate backwards since we'll be destroying children.
-        for (int i = _parentAfterThrow.childCount - 1; i >= 0; i--)
+        // Some fruit prefabs may put FruitInfo on a nested child; destroy the object that
+        // actually owns FruitInfo to ensure the whole fruit is removed.
+        FruitInfo[] infos = _parentAfterThrow.GetComponentsInChildren<FruitInfo>(true);
+        HashSet<GameObject> toDestroy = new HashSet<GameObject>();
+        foreach (FruitInfo info in infos)
         {
-            Transform child = _parentAfterThrow.GetChild(i);
-            if (child == null) continue;
+            if (info == null) continue;
+            if (info.FruitIndex != fruitIndex) continue;
+            toDestroy.Add(info.gameObject);
+        }
 
-            FruitInfo info = child.GetComponent<FruitInfo>();
-            if (info != null && info.FruitIndex == fruitIndex)
-            {
-                Destroy(child.gameObject);
-                eliminated++;
-            }
+        int eliminated = 0;
+        foreach (GameObject go in toDestroy)
+        {
+            if (go == null) continue;
+            Destroy(go);
+            eliminated++;
         }
 
         Debug.Log($"{nameof(ThrowFruitController)}: Eliminated {eliminated} fruits of index {fruitIndex}.");
