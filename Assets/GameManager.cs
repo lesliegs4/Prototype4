@@ -34,13 +34,13 @@ public class GameManager : MonoBehaviour
             instance = this;
         }
 
-        // _scoreText.text = CurrentScore.ToString("0");
+        _scoreText.text = CurrentScore.ToString("0");
     }
 
     public void IncreaseScore(int amount)
     {
         CurrentScore += amount;
-        // _scoreText.text = CurrentScore.ToString("0");
+        _scoreText.text = CurrentScore.ToString("0");
     }
 
     public void GameOver()
@@ -78,10 +78,10 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator FadeGameIn()
     {
-        _gameOverPanel.gameObject.SetActive(true);
-        Color startColor = _gameOverPanel.color;
-        startColor.a = 1f;
-        _gameOverPanel.color = startColor;
+        // _gameOverPanel.gameObject.SetActive(true);
+        // Color startColor = _gameOverPanel.color;
+        // startColor.a = 1f;
+        // _gameOverPanel.color = startColor;
 
         float elapsedTime = 0f;
         while(elapsedTime < _fadeTime)
@@ -89,12 +89,12 @@ public class GameManager : MonoBehaviour
             elapsedTime += Time.deltaTime;
 
             float newAlpha = Mathf.Lerp(1f, 0f, (elapsedTime / _fadeTime));
-            startColor.a = newAlpha;
-            _gameOverPanel.color = startColor;
+            // startColor.a = newAlpha;
+            // _gameOverPanel.color = startColor;
 
             yield return null;
         }
 
-        _gameOverPanel.gameObject.SetActive(false);
+        // _gameOverPanel.gameObject.SetActive(false);
     }
 }
