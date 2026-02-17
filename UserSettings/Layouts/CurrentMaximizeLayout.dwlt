@@ -23,7 +23,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 112}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 19740
+  controlID: 22160
   draggingID: 0
 --- !u!114 &2
 MonoBehaviour:
@@ -152,7 +152,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 112}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 1
-  controlID: 19741
+  controlID: 22161
   draggingID: 0
 --- !u!114 &4
 MonoBehaviour:
@@ -179,7 +179,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 56}
   m_MaxSize: {x: 24288, y: 8096}
   vertical: 0
-  controlID: 19742
+  controlID: 22143
   draggingID: 0
 --- !u!114 &5
 MonoBehaviour:
@@ -247,7 +247,7 @@ MonoBehaviour:
     m_DynamicPanelBehavior: 0
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 0}
+      scrollPos: {x: 0, y: 19.5}
       m_SelectedIDs: []
       m_LastClickedID:
         m_Data: 0
@@ -255,9 +255,11 @@ MonoBehaviour:
       - m_Data: -1314
       - m_Data: 47346
       - m_Data: 47364
+      - m_Data: 47368
       - m_Data: 47378
       - m_Data: 47432
       - m_Data: 47452
+      - m_Data: 47464
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -877,9 +879,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: 220.17966, y: 140.10352, z: -1.0583673}
+    m_Target: {x: 1.11831, y: -3.7595553, z: -0.015669035}
     speed: 2
-    m_Value: {x: 220.17966, y: 140.10352, z: -1.0583673}
+    m_Value: {x: 1.11831, y: -3.7595553, z: -0.015669035}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -929,9 +931,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 141.5456
+    m_Target: 2.4329288
     speed: 2
-    m_Value: 141.5456
+    m_Value: 2.4329288
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -1090,8 +1092,8 @@ MonoBehaviour:
     m_CachedPref: -160
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
-  m_LastInspectedObjectInstanceID: 47432
-  m_LastVerticalScrollValue: 383.5
+  m_LastInspectedObjectInstanceID: 47418
+  m_LastVerticalScrollValue: 0
   m_GlobalObjectId: 
   m_InspectorMode: 0
   m_LockTracker:
@@ -1174,7 +1176,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Prefabs/NoPhysics
+    - Assets
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -1184,7 +1186,7 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Prefabs/NoPhysics
+  - Assets
   m_LastFoldersGridSize: -1
   m_LastProjectPath: /Users/lesliegarcia/Desktop/CS426/Prototype4
   m_LockTracker:
@@ -1193,9 +1195,9 @@ MonoBehaviour:
   m_FolderTreeState:
     scrollPos: {x: 0, y: 47.5}
     m_SelectedIDs:
-    - m_Data: 49522
+    - m_Data: 47726
     m_LastClickedID:
-      m_Data: 49522
+      m_Data: 47726
     m_ExpandedIDs:
     - m_Data: 0
     - m_Data: 47726
@@ -1265,8 +1267,8 @@ MonoBehaviour:
       m_ResourceFile: 
   m_ListAreaState:
     m_SelectedInstanceIDs:
-    - m_Data: 47432
-    m_LastClickedInstanceID: 47432
+    - m_Data: 47418
+    m_LastClickedInstanceID: 47418
     m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs:
     - m_Data: 48500
