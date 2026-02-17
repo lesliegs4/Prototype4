@@ -21,6 +21,8 @@ public class ThrowFruitController : MonoBehaviour
 
     public bool CanThrow { get; set; } = true;
 
+    public Transform FruitContainer => _parentAfterThrow;
+
 
     private void Awake()
     {
@@ -65,5 +67,28 @@ public class ThrowFruitController : MonoBehaviour
         Bounds = _circleCollider.bounds;
 
         _playerController.ChangeBoundary(_edgePadding);
+    }
+
+    public void EliminateAllFruitsOfIndex(int fruitIndex)
+    {
+        if (_parentAfterThrow == null) return;
+
+        int eliminated = 0;
+
+        // Iterate backwards since we'll be destroying children.
+        for (int i = _parentAfterThrow.childCount - 1; i >= 0; i--)
+        {
+            Transform child = _parentAfterThrow.GetChild(i);
+            if (child == null) continue;
+
+            FruitInfo info = child.GetComponent<FruitInfo>();
+            if (info != null && info.FruitIndex == fruitIndex)
+            {
+                Destroy(child.gameObject);
+                eliminated++;
+            }
+        }
+
+        Debug.Log($"{nameof(ThrowFruitController)}: Eliminated {eliminated} fruits of index {fruitIndex}.");
     }
 }

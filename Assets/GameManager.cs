@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -16,6 +17,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float _fadeTime = 2f;
 
     public float TimeTillGameOver = 1.5f;
+
+    /// <summary>
+    /// Fired any time the player's total coins (score) changes.
+    /// </summary>
+    public event Action<int> TotalCoinsChanged;
 
     private void OnEnable()
     {
@@ -34,13 +40,74 @@ public class GameManager : MonoBehaviour
             instance = this;
         }
 
-        _scoreText.text = CurrentScore.ToString("0");
+        SetTotalCoins(CurrentScore);
+    }
+
+    private void Start()
+    {
+        EnsureCoinsPerSpinStickerExists();
+        EnsureEliminateFruitPopupExists();
     }
 
     public void IncreaseScore(int amount)
     {
-        CurrentScore += amount;
-        _scoreText.text = CurrentScore.ToString("0");
+        SetTotalCoins(CurrentScore + amount);
+    }
+
+    public bool TrySpendCoins(int amount)
+    {
+        if (amount <= 0) return false;
+        if (CurrentScore < amount) return false;
+
+        SetTotalCoins(CurrentScore - amount);
+        return true;
+    }
+
+    private void SetTotalCoins(int newTotal)
+    {
+        CurrentScore = Mathf.Max(0, newTotal);
+        if (_scoreText != null)
+        {
+            _scoreText.text = CurrentScore.ToString("0");
+        }
+        TotalCoinsChanged?.Invoke(CurrentScore);
+    }
+
+    private void EnsureCoinsPerSpinStickerExists()
+    {
+        // The right-side UI placeholder is named this in the scene.
+        GameObject holder = GameObject.Find("NextBubbleHolder");
+        if (holder == null) return;
+
+        if (holder.GetComponent<CoinsPerSpinSticker>() == null)
+        {
+            holder.AddComponent<CoinsPerSpinSticker>();
+        }
+    }
+
+    private void EnsureEliminateFruitPopupExists()
+    {
+        // GameObject.Find won't locate inactive objects, so search under Canvas including inactive.
+        GameObject canvasGO = GameObject.Find("Canvas");
+        if (canvasGO == null) return;
+
+        Transform popupT = null;
+        foreach (Transform t in canvasGO.GetComponentsInChildren<Transform>(true))
+        {
+            if (t != null && t.name == "EliminateFruitPopup")
+            {
+                popupT = t;
+                break;
+            }
+        }
+
+        GameObject popupGO = popupT != null ? popupT.gameObject : null;
+        if (popupGO == null) return;
+
+        if (popupGO.GetComponent<EliminateFruitPopup>() == null)
+        {
+            popupGO.AddComponent<EliminateFruitPopup>();
+        }
     }
 
     public void GameOver()
