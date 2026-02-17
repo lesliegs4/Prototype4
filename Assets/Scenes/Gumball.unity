@@ -672,7 +672,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &288030084
 RectTransform:
   m_ObjectHideFlags: 0
@@ -705,7 +705,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.990566, g: 0.94556266, b: 0.70554465, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1332,7 +1332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   _scoreText: {fileID: 215185376}
-  _gameOverPanel: {fileID: 0}
+  _gameOverPanel: {fileID: 288030085}
   _fadeTime: 2
   TimeTillGameOver: 1.5
 --- !u!1 &1511402109
@@ -1864,7 +1864,7 @@ MonoBehaviour:
   - {fileID: 6220994271115552930, guid: b25222d642dcb4b68b9aa7a6d462802a, type: 3}
   - {fileID: 5986585012558113909, guid: 7381cf9d16fec4202b71dd9d27ed2c55, type: 3}
   - {fileID: 7722857073477848881, guid: b3e92ac1b54d54f71b13fcc9a1a91e3b, type: 3}
-  HighestStartingIndex: 3
+  HighestStartingIndex: 7
   _nextFruitImage: {fileID: 0}
 --- !u!1 &2011333013
 GameObject:
