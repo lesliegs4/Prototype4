@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 6782663779857102539}
   - component: {fileID: 7982737864502156387}
   - component: {fileID: 7556591795510273092}
+  - component: {fileID: -1136557813391316366}
+  - component: {fileID: 8726578777133579828}
   m_Layer: 0
   m_Name: 1 - banana
   m_TagString: Untagged
@@ -169,3 +171,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ada0049e97e64739a1c8eef04f8413a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Collider
+--- !u!114 &-1136557813391316366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 803864416116042434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7de7f1be3b1f473db5783c6fb97f8c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FruitCombiner
+--- !u!114 &8726578777133579828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 803864416116042434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15bb8e445b31b46b6a4e35e37bc50229, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FruitInfo
+  FruitIndex: 0
+  PointsWhenAnnihilated: 1
+  FruitMass: 1

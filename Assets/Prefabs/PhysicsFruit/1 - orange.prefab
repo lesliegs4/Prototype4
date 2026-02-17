@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 4759547860675129498}
   - component: {fileID: 4998262293685045036}
   - component: {fileID: -7537242152122723313}
+  - component: {fileID: -3807482647438507318}
+  - component: {fileID: -7435590655001905705}
   m_Layer: 0
   m_Name: 1 - orange
   m_TagString: Untagged
@@ -169,3 +171,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ada0049e97e64739a1c8eef04f8413a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Collider
+--- !u!114 &-3807482647438507318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629003390894658092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7de7f1be3b1f473db5783c6fb97f8c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FruitCombiner
+--- !u!114 &-7435590655001905705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1629003390894658092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15bb8e445b31b46b6a4e35e37bc50229, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FruitInfo
+  FruitIndex: 4
+  PointsWhenAnnihilated: 1
+  FruitMass: 1
