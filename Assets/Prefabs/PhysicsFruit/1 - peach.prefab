@@ -196,7 +196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15bb8e445b31b46b6a4e35e37bc50229, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FruitInfo
-  FruitIndex: 0
+  FruitIndex: 8
   PointsWhenAnnihilated: 1
   FruitMass: 1
 --- !u!114 &2738000791396135951

@@ -30,36 +30,30 @@ public class FruitCombiner : MonoBehaviour
                     {
                         GameManager.instance.IncreaseScore(_info.PointsWhenAnnihilated);
 
-                        if (_info.FruitIndex == FruitSelector.instance.Fruits.Length -1)
+                        // Spawn the next fruit in the progression at the midpoint.
+                        // If we're at the last index (e.g., peach), wrap to the first (banana).
+                        Vector3 middlePosition = (transform.position + collision.transform.position) / 2f;
+
+                        int nextIndex = _info.FruitIndex + 1;
+                        int len = FruitSelector.instance.Fruits.Length;
+                        if (len <= 0) return;
+                        if (nextIndex >= len) nextIndex = 0;
+
+                        Transform parent = ThrowFruitController.instance != null ? ThrowFruitController.instance.FruitContainer : null;
+                        GameObject go = Instantiate(FruitSelector.instance.Fruits[nextIndex], parent);
+                        go.transform.position = middlePosition;
+
+                        ColliderInformer informer = go.GetComponent<ColliderInformer>();
+                        if (informer != null)
                         {
-                            Destroy(collision.gameObject);
-                            Destroy(gameObject);
+                            informer.WasCombinedIn = true;
                         }
 
-                        else
-                        {
-                            Vector3 middlePosition = (transform.position + collision.transform.position) / 2f;
-                            GameObject go = Instantiate(SpawnCombinedFruit(_info.FruitIndex), GameManager.instance.transform);
-                            go.transform.position = middlePosition;
-
-                            ColliderInformer informer = go.GetComponent<ColliderInformer>();
-                            if (informer != null)
-                            {
-                                informer.WasCombinedIn = true;
-                            }
-
-                            Destroy(collision.gameObject);
-                            Destroy(gameObject);
-                        }
+                        Destroy(collision.gameObject);
+                        Destroy(gameObject);
                     }
                 }
             }
         }
-    }
-
-    private GameObject SpawnCombinedFruit(int index)
-    {
-        GameObject go = FruitSelector.instance.Fruits[index + 1];
-        return go;
     }
 }

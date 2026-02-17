@@ -14,13 +14,10 @@ public class CoinsPerSpinSticker : MonoBehaviour, IPointerClickHandler
     [SerializeField] private TextMeshProUGUI _coinsPerSpinText;
 
     [Header("Tuning")]
-    [SerializeField] private int _startingCoinsPerSpin = 1;
-    [SerializeField] private int _coinsEarnedPerDouble = 5;
-    [SerializeField] private float _textYOffset = 20f;
+    [SerializeField] private int _coinsPerDoubleStep = 5;
+    [SerializeField] private float _textYOffset = 45f;
 
     private int _coinsPerSpin;
-    private int _prevTotalCoins;
-    private int _earnedCoinsAccumulator;
 
     private void OnEnable()
     {
@@ -33,11 +30,7 @@ public class CoinsPerSpinSticker : MonoBehaviour, IPointerClickHandler
     private void Start()
     {
         EnsureTextExists();
-
-        _coinsPerSpin = Mathf.Max(1, _startingCoinsPerSpin);
-        _prevTotalCoins = GameManager.instance != null ? GameManager.instance.CurrentScore : 0;
-        _earnedCoinsAccumulator = 0;
-        RefreshText();
+        RecomputeCoinsPerSpin(GameManager.instance != null ? GameManager.instance.CurrentScore : 0);
     }
 
     private void OnDisable()
@@ -50,29 +43,30 @@ public class CoinsPerSpinSticker : MonoBehaviour, IPointerClickHandler
 
     private void HandleTotalCoinsChanged(int newTotalCoins)
     {
-        int delta = newTotalCoins - _prevTotalCoins;
-        _prevTotalCoins = newTotalCoins;
+        // Cost is a pure function of total coins, so it stays consistent even after spending.
+        RecomputeCoinsPerSpin(newTotalCoins);
+    }
 
-        // Only count positive deltas as "coins gained" for doubling.
-        if (delta <= 0) return;
-
-        _earnedCoinsAccumulator += delta;
-
-        if (_coinsEarnedPerDouble <= 0) _coinsEarnedPerDouble = 5;
-        int doubles = _earnedCoinsAccumulator / _coinsEarnedPerDouble;
-        if (doubles <= 0) return;
-
-        _earnedCoinsAccumulator %= _coinsEarnedPerDouble;
-
-        for (int i = 0; i < doubles; i++)
+    private void RecomputeCoinsPerSpin(int totalCoins)
+    {
+        if (_coinsPerDoubleStep <= 0) _coinsPerDoubleStep = 5;
+        if (totalCoins <= 0)
         {
-            // Avoid overflow; cap at int.MaxValue.
-            if (_coinsPerSpin > int.MaxValue / 2)
-            {
-                _coinsPerSpin = int.MaxValue;
-                break;
-            }
-            _coinsPerSpin *= 2;
+            _coinsPerSpin = 1;
+            RefreshText();
+            return;
+        }
+
+        int steps = totalCoins / _coinsPerDoubleStep; // 0.. => every +5 coins increases exponent by 1
+
+        // coinsPerSpin = 2^steps, clamped to int range
+        if (steps >= 30)
+        {
+            _coinsPerSpin = int.MaxValue;
+        }
+        else
+        {
+            _coinsPerSpin = 1 << steps;
         }
 
         RefreshText();
@@ -150,6 +144,12 @@ public class CoinsPerSpinSticker : MonoBehaviour, IPointerClickHandler
             _coinsPerSpinText.enableAutoSizing = true;
             _coinsPerSpinText.fontSizeMin = 24;
             _coinsPerSpinText.fontSizeMax = 96;
+        }
+
+        // Make the number black for readability.
+        if (_coinsPerSpinText != null)
+        {
+            _coinsPerSpinText.color = Color.black;
         }
 
         // Nudge the amount up so it doesn't block sticker text.
