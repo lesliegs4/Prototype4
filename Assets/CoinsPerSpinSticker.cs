@@ -109,6 +109,13 @@ public class CoinsPerSpinSticker : MonoBehaviour, IPointerClickHandler
         {
             ThrowFruitController.instance.EliminateAllFruitsOfIndex(fruitIndex);
         }
+
+        // Play knob animation only after player selected color + purchase succeeded.
+        KnobUIController knob = KnobUIController.GetOrFindInstance();
+        if (knob != null)
+        {
+            knob.PlayOnce();
+        }
     }
 
     private void RefreshText()

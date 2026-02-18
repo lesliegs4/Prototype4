@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
     {
         EnsureCoinsPerSpinStickerExists();
         EnsureEliminateFruitPopupExists();
+        EnsureKnobUIControllerExists();
     }
 
     public void IncreaseScore(int amount)
@@ -107,6 +108,30 @@ public class GameManager : MonoBehaviour
         if (popupGO.GetComponent<EliminateFruitPopup>() == null)
         {
             popupGO.AddComponent<EliminateFruitPopup>();
+        }
+    }
+
+    private void EnsureKnobUIControllerExists()
+    {
+        GameObject canvasGO = GameObject.Find("Canvas");
+        if (canvasGO == null) return;
+
+        Transform knobT = null;
+        foreach (Transform t in canvasGO.GetComponentsInChildren<Transform>(true))
+        {
+            if (t != null && t.name == "KnobUI")
+            {
+                knobT = t;
+                break;
+            }
+        }
+
+        if (knobT == null) return;
+        GameObject knobGO = knobT.gameObject;
+
+        if (knobGO.GetComponent<KnobUIController>() == null)
+        {
+            knobGO.AddComponent<KnobUIController>();
         }
     }
 
