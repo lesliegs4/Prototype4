@@ -17,6 +17,7 @@ public class KnobUIController : MonoBehaviour
     [SerializeField] private float _spinDegrees = -360f;
 
     private Coroutine _playRoutine;
+    private Color _playColor = Color.white;
 
     private void Awake()
     {
@@ -32,6 +33,20 @@ public class KnobUIController : MonoBehaviour
 
         if (_animator == null) _animator = GetComponent<Animator>();
         if (_image == null) _image = GetComponent<Image>();
+
+        // Cache a sensible "visible" color for play. If the scene tint is fully transparent
+        // (and often black), use white so the sprite isn't rendered as a black silhouette.
+        if (_image != null)
+        {
+            _playColor = _image.color;
+            if (_playColor.a <= 0.001f) _playColor.a = 1f;
+            if (_playColor.r <= 0.001f && _playColor.g <= 0.001f && _playColor.b <= 0.001f)
+            {
+                _playColor.r = 1f;
+                _playColor.g = 1f;
+                _playColor.b = 1f;
+            }
+        }
 
         Hide();
     }
@@ -148,7 +163,11 @@ public class KnobUIController : MonoBehaviour
 
     private void Show()
     {
-        if (_image != null) _image.enabled = true;
+        if (_image != null)
+        {
+            _image.color = _playColor;
+            _image.enabled = true;
+        }
     }
 
     private void Hide()
