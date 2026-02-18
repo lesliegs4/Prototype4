@@ -1451,6 +1451,9 @@ MonoBehaviour:
   _playScaleMultiplier: 1.1
   _animator: {fileID: 965643030}
   _image: {fileID: 965643031}
+  _audioSource: {fileID: 0}
+  _knobTurningSFX: {fileID: 8300000, guid: ecb7c62e549c344e9a921dd3c441f7b9, type: 3}
+  _knobTurningVolume: 0.65
   _fallbackDurationSeconds: 0.5
   _spinDegrees: -360
 --- !u!1 &1446054892
@@ -1545,10 +1548,14 @@ MonoBehaviour:
   _gameOverPanel: {fileID: 288030085}
   _fadeTime: 2
   _endScreenHoldTime: 1.5
-  _audioSource: {fileID: 1972840498}
+  _audioSource: {fileID: 0}
+  _mergeAudioSource: {fileID: 0}
   _gameOverSFX: {fileID: 8300000, guid: 9539c7d8ab54742fc83a5930a57612f3, type: 3}
   _winSFX: {fileID: 8300000, guid: 680b847300f2f4dbc94fcf502a1ac31b, type: 3}
-  _dropSFX: {fileID: 8300000, guid: 3393fcc41ddd0410e8f3c30b1bccc1cd, type: 3}
+  _dropSFX: {fileID: 8300000, guid: 26e07f261541841ffa740629a1f980a7, type: 3}
+  _mergeSFX: {fileID: 8300000, guid: 591b35411ece84f0585601394d09e44a, type: 3}
+  _mergePlaybackSeconds: 0.3
+  _mergeVolume: 0.2
   TimeTillGameOver: 1.5
 --- !u!1 &1511402109
 GameObject:
@@ -2168,7 +2175,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
   Loop: 0

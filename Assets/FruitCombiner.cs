@@ -29,6 +29,10 @@ public class FruitCombiner : MonoBehaviour
                     if (thisID > otherID)
                     {
                         GameManager.instance.IncreaseScore(_info.PointsWhenAnnihilated);
+                        if (GameManager.instance != null)
+                        {
+                            GameManager.instance.PlayMergeSound();
+                        }
 
                         // Spawn the next fruit in the progression at the midpoint.
                         // If we're at the last index (e.g., peach), wrap to the first (banana).
@@ -43,11 +47,19 @@ public class FruitCombiner : MonoBehaviour
                         GameObject go = Instantiate(FruitSelector.instance.Fruits[nextIndex], parent);
                         go.transform.position = middlePosition;
 
-                        ColliderInformer informer = go.GetComponent<ColliderInformer>();
-                        if (informer != null)
+                        Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
+                        if (rb == null) rb = go.GetComponentInChildren<Rigidbody2D>();
+                        GameObject target = rb != null ? rb.gameObject : go;
+                        if (rb == null)
                         {
-                            informer.WasCombinedIn = true;
+                            Collider2D c = go.GetComponent<Collider2D>();
+                            if (c == null) c = go.GetComponentInChildren<Collider2D>();
+                            if (c != null) target = c.gameObject;
                         }
+
+                        ColliderInformer informer = target.GetComponent<ColliderInformer>();
+                        if (informer == null) informer = target.AddComponent<ColliderInformer>();
+                        informer.WasCombinedIn = true;
 
                         Destroy(collision.gameObject);
                         Destroy(gameObject);

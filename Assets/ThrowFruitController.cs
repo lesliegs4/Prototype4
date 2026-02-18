@@ -48,8 +48,21 @@ public class ThrowFruitController : MonoBehaviour
 
             GameObject go = Instantiate(FruitSelector.instance.Fruits[index.Index], CurrentFruit.transform.position, rot);
             go.transform.SetParent(_parentAfterThrow);
-            
-            GameManager.instance.PlayDropSound();
+            // Ensure the "first landing" handler is attached to the Rigidbody/Collider object,
+            // so it receives collision callbacks even when colliders are on children.
+            Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
+            if (rb == null) rb = go.GetComponentInChildren<Rigidbody2D>();
+            GameObject target = rb != null ? rb.gameObject : go;
+            if (rb == null)
+            {
+                Collider2D c = go.GetComponent<Collider2D>();
+                if (c == null) c = go.GetComponentInChildren<Collider2D>();
+                if (c != null) target = c.gameObject;
+            }
+
+            ColliderInformer informer = target.GetComponent<ColliderInformer>();
+            if (informer == null) informer = target.AddComponent<ColliderInformer>();
+            informer.WasCombinedIn = false;
 
             Destroy(CurrentFruit);
 

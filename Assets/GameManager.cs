@@ -19,14 +19,19 @@ public class GameManager : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioSource _mergeAudioSource;
     [SerializeField] private AudioClip _gameOverSFX;
     [SerializeField] private AudioClip _winSFX;
-    [SerializeField] private AudioClip _dropSFX;
+    [SerializeField] private AudioClip _dropSFX; // Landing SFX
+    [SerializeField] private AudioClip _mergeSFX;
+    [SerializeField] private float _mergePlaybackSeconds = 0.95f;
+    [SerializeField] private float _mergeVolume = 0.65f;
 
     public float TimeTillGameOver = 1.5f;
 
     private bool _hasPlacedFruitInContainer = false;
     private bool _isEnding = false;
+    private Coroutine _mergeStopRoutine;
 
     /// <summary>
     /// Fired any time the player's total coins (score) changes.
@@ -39,6 +44,9 @@ public class GameManager : MonoBehaviour
         {
             instance = this;
         }
+
+        EnsureMainAudioSource();
+        EnsureMergeAudioSource();
 
         if (_gameOverPanel != null)
         {
@@ -56,6 +64,36 @@ public class GameManager : MonoBehaviour
         }
 
         SetTotalCoins(CurrentScore);
+    }
+
+    private void EnsureMainAudioSource()
+    {
+        if (_audioSource == null) _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null) _audioSource = gameObject.AddComponent<AudioSource>();
+
+        _audioSource.playOnAwake = false;
+        _audioSource.loop = false;
+        _audioSource.spatialBlend = 0f;
+        if (_audioSource.volume <= 0f) _audioSource.volume = 1f;
+        _audioSource.mute = false;
+    }
+
+    private void EnsureMergeAudioSource()
+    {
+        // Keep merge playback isolated so stopping it early doesn't cut off other SFX.
+        if (_mergeAudioSource != null) return;
+        EnsureMainAudioSource();
+
+        _mergeAudioSource = gameObject.AddComponent<AudioSource>();
+        _mergeAudioSource.playOnAwake = false;
+        _mergeAudioSource.loop = false;
+        _mergeAudioSource.spatialBlend = 0f;
+
+        if (_audioSource != null)
+        {
+            _mergeAudioSource.outputAudioMixerGroup = _audioSource.outputAudioMixerGroup;
+            _mergeAudioSource.volume = _audioSource.volume;
+        }
     }
 
     private void Start()
@@ -170,6 +208,7 @@ public class GameManager : MonoBehaviour
     {
         if (_isEnding) return;
         
+        EnsureMainAudioSource();
         if (_audioSource != null && _gameOverSFX != null) _audioSource.PlayOneShot(_gameOverSFX);
 
         _isEnding = true;
@@ -179,6 +218,7 @@ public class GameManager : MonoBehaviour
     public void YouWin()
     {
         if (_isEnding) return;
+        EnsureMainAudioSource();
         if (_audioSource != null && _winSFX != null) _audioSource.PlayOneShot(_winSFX);
         _isEnding = true;
         StartCoroutine(ResetGame(showWin: true));
@@ -254,15 +294,47 @@ public class GameManager : MonoBehaviour
 
 public void PlayDropSound()
 {
-    if (_audioSource != null && _dropSFX != null)
+    PlayLandingSound();
+}
+
+public void PlayLandingSound()
+{
+    EnsureMainAudioSource();
+    if (_audioSource == null || _dropSFX == null) return;
+
+    _audioSource.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
+    _audioSource.PlayOneShot(_dropSFX);
+    _audioSource.pitch = 1f;
+}
+
+public void PlayMergeSound()
+{
+    if (_mergeSFX == null) return;
+    EnsureMergeAudioSource();
+    if (_mergeAudioSource == null) return;
+
+    if (_mergeStopRoutine != null)
     {
-        // Randomize pitch between 0.9 and 1.1 (standard is 1.0)
-        _audioSource.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
-        _audioSource.PlayOneShot(_dropSFX);
-        
-        // Reset pitch so other sounds aren't affected
-        _audioSource.pitch = 1f; 
+        StopCoroutine(_mergeStopRoutine);
+        _mergeStopRoutine = null;
     }
+
+    _mergeAudioSource.Stop();
+    _mergeAudioSource.pitch = UnityEngine.Random.Range(0.95f, 1.05f);
+    _mergeAudioSource.volume = Mathf.Clamp01(_mergeVolume);
+    _mergeAudioSource.clip = _mergeSFX;
+    _mergeAudioSource.Play();
+    _mergeAudioSource.pitch = 1f;
+
+    float seconds = Mathf.Clamp(_mergePlaybackSeconds, 0.05f, 10f);
+    _mergeStopRoutine = StartCoroutine(StopMergeAfter(seconds));
+}
+
+private IEnumerator StopMergeAfter(float seconds)
+{
+    yield return new WaitForSeconds(seconds);
+    if (_mergeAudioSource != null) _mergeAudioSource.Stop();
+    _mergeStopRoutine = null;
 }
 
 }

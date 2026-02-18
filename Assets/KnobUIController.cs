@@ -22,6 +22,11 @@ public class KnobUIController : MonoBehaviour
     [SerializeField] private Animator _animator;
     [SerializeField] private Image _image;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioClip _knobTurningSFX;
+    [SerializeField] private float _knobTurningVolume = 0.65f;
+
     [SerializeField] private float _fallbackDurationSeconds = 0.5f;
     [SerializeField] private float _spinDegrees = -360f;
 
@@ -45,6 +50,7 @@ public class KnobUIController : MonoBehaviour
 
         if (_animator == null) _animator = GetComponent<Animator>();
         if (_image == null) _image = GetComponent<Image>();
+        EnsureAudioSource();
         _rt = GetComponent<RectTransform>();
         if (_rt != null) _baseScale = _rt.localScale;
 
@@ -66,6 +72,33 @@ public class KnobUIController : MonoBehaviour
         }
 
         Hide();
+    }
+
+    private void EnsureAudioSource()
+    {
+        if (_audioSource == null) _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null) _audioSource = gameObject.AddComponent<AudioSource>();
+
+        _audioSource.playOnAwake = false;
+        _audioSource.loop = true;
+        _audioSource.spatialBlend = 0f; // UI sound should be 2D
+        _audioSource.volume = Mathf.Clamp01(_knobTurningVolume);
+    }
+
+    private void StartTurningSound()
+    {
+        if (_audioSource == null) return;
+        if (_knobTurningSFX == null) return;
+
+        _audioSource.volume = Mathf.Clamp01(_knobTurningVolume);
+        if (_audioSource.clip != _knobTurningSFX) _audioSource.clip = _knobTurningSFX;
+        if (!_audioSource.isPlaying) _audioSource.Play();
+    }
+
+    private void StopTurningSound()
+    {
+        if (_audioSource == null) return;
+        if (_audioSource.isPlaying) _audioSource.Stop();
     }
 
     public static KnobUIController GetOrFindInstance()
@@ -91,6 +124,7 @@ public class KnobUIController : MonoBehaviour
             StopCoroutine(_playRoutine);
             _playRoutine = null;
         }
+        StopTurningSound();
 
         UpdateAlignment();
         Show();
@@ -128,6 +162,7 @@ public class KnobUIController : MonoBehaviour
     private IEnumerator PlayAndHide(float seconds)
     {
         float duration = Mathf.Max(0.05f, seconds);
+        StartTurningSound();
 
         // Try playing the Animator first (works if the clip targets UI.Image sprite).
         Sprite initialSprite = _image != null ? _image.sprite : null;
@@ -214,6 +249,7 @@ public class KnobUIController : MonoBehaviour
 
     private void Hide()
     {
+        StopTurningSound();
         if (_animator != null) _animator.enabled = false;
         if (_image != null) _image.enabled = false;
         if (_rt != null) _rt.localScale = _baseScale;
