@@ -28,15 +28,15 @@ public class FruitCombiner : MonoBehaviour
 
                     if (thisID > otherID)
                     {
-                        GameManager.instance.IncreaseScore(_info.PointsWhenAnnihilated);
-                        if (GameManager.instance != null)
-                        {
-                            GameManager.instance.PlayMergeSound();
-                        }
-
                         // Spawn the next fruit in the progression at the midpoint.
                         // If we're at the last index (e.g., peach), wrap to the first (banana).
                         Vector3 middlePosition = (transform.position + collision.transform.position) / 2f;
+
+                        if (GameManager.instance != null)
+                        {
+                            GameManager.instance.PlayMergeSound();
+                            GameManager.instance.AwardCoinsFromMerge(middlePosition, _info.PointsWhenAnnihilated);
+                        }
 
                         int nextIndex = _info.FruitIndex + 1;
                         int len = FruitSelector.instance.Fruits.Length;

@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     public int CurrentScore { get; set; }
 
     [SerializeField] private TextMeshProUGUI _scoreText;
+    [Header("Merge VFX")]
+    [SerializeField] private CoinFlyoutEffect _coinFlyoutEffect;
     [SerializeField] private Image _gameOverPanel;
     [SerializeField] private float _fadeTime = 2f;
     [SerializeField] private float _endScreenHoldTime = 1.5f;
@@ -64,6 +66,12 @@ public class GameManager : MonoBehaviour
         }
 
         SetTotalCoins(CurrentScore);
+
+        // If a CoinFlyoutEffect is assigned but not configured, default the target to the score text.
+        if (_coinFlyoutEffect != null && _scoreText != null)
+        {
+            _coinFlyoutEffect.SetCoinTarget(_scoreText.rectTransform);
+        }
     }
 
     private void EnsureMainAudioSource()
@@ -122,6 +130,33 @@ public class GameManager : MonoBehaviour
     public void IncreaseScore(int amount)
     {
         SetTotalCoins(CurrentScore + amount);
+    }
+
+    public RectTransform GetScoreRectTransform()
+    {
+        return _scoreText != null ? _scoreText.rectTransform : null;
+    }
+
+    /// <summary>
+    /// Call this at the merge position to spawn merge VFX and animate the coin count increasing.
+    /// Falls back to a normal score increase if VFX isn't wired.
+    /// </summary>
+    public void AwardCoinsFromMerge(Vector3 mergeWorldPos, int amount)
+    {
+        if (amount <= 0) return;
+
+        if (_coinFlyoutEffect == null)
+        {
+            IncreaseScore(amount);
+            return;
+        }
+
+        if (_scoreText != null)
+        {
+            _coinFlyoutEffect.SetCoinTarget(_scoreText.rectTransform);
+        }
+
+        _coinFlyoutEffect.PlayMerge(mergeWorldPos, amount, delta => IncreaseScore(delta));
     }
 
     public bool TrySpendCoins(int amount)
