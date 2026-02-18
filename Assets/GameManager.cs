@@ -15,29 +15,38 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _scoreText;
     [SerializeField] private Image _gameOverPanel;
     [SerializeField] private float _fadeTime = 2f;
+    [SerializeField] private float _endScreenHoldTime = 1.5f;
 
     public float TimeTillGameOver = 1.5f;
+
+    private bool _hasPlacedFruitInContainer = false;
+    private bool _isEnding = false;
 
     /// <summary>
     /// Fired any time the player's total coins (score) changes.
     /// </summary>
     public event Action<int> TotalCoinsChanged;
 
-    private void OnEnable()
-    {
-        SceneManager.sceneLoaded += FadeGame;
-    }
-
-    private void OnDisable()
-    {
-        SceneManager.sceneLoaded -= FadeGame;
-    }
-
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
+        }
+
+        if (_gameOverPanel != null)
+        {
+            // Ensure the game-over fade panel is hidden at game start.
+            Color c = _gameOverPanel.color;
+            c.a = 0f;
+            _gameOverPanel.color = c;
+            _gameOverPanel.gameObject.SetActive(false);
+
+            // Ensure only the Game Over image is enabled by default.
+            Transform gameOverT = _gameOverPanel.transform.Find("GameOverImage");
+            if (gameOverT != null) gameOverT.gameObject.SetActive(true);
+            Transform youWinT = _gameOverPanel.transform.Find("YouWinImage");
+            if (youWinT != null) youWinT.gameObject.SetActive(false);
         }
 
         SetTotalCoins(CurrentScore);
@@ -48,6 +57,22 @@ public class GameManager : MonoBehaviour
         EnsureCoinsPerSpinStickerExists();
         EnsureEliminateFruitPopupExists();
         EnsureKnobUIControllerExists();
+    }
+
+    private void Update()
+    {
+        if (_isEnding) return;
+        if (!_hasPlacedFruitInContainer) return;
+
+        Transform container = ThrowFruitController.instance != null ? ThrowFruitController.instance.FruitContainer : null;
+        if (container == null) return;
+
+        // "No more fruits left" = no FruitInfo present under the container.
+        FruitInfo anyInfo = container.GetComponentInChildren<FruitInfo>(true);
+        if (anyInfo == null)
+        {
+            YouWin();
+        }
     }
 
     public void IncreaseScore(int amount)
@@ -137,16 +162,56 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-        StartCoroutine(ResetGame());
+        if (_isEnding) return;
+        _isEnding = true;
+        StartCoroutine(ResetGame(showWin: false));
     }
 
-    private IEnumerator ResetGame()
+    public void YouWin()
     {
+        if (_isEnding) return;
+        _isEnding = true;
+        StartCoroutine(ResetGame(showWin: true));
+    }
+
+    public void NotifyFruitPlacedInContainer()
+    {
+        _hasPlacedFruitInContainer = true;
+    }
+
+    private static void SetAlpha(Image img, float a)
+    {
+        if (img == null) return;
+        Color c = img.color;
+        c.a = a;
+        img.color = c;
+    }
+
+    private IEnumerator ResetGame(bool showWin)
+    {
+        if (_gameOverPanel == null)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            yield break;
+        }
+
         _gameOverPanel.gameObject.SetActive(true);
+
+        Transform gameOverT = _gameOverPanel.transform.Find("GameOverImage");
+        if (gameOverT != null) gameOverT.gameObject.SetActive(!showWin);
+        Transform youWinT = _gameOverPanel.transform.Find("YouWinImage");
+        if (youWinT != null) youWinT.gameObject.SetActive(showWin);
+
+        Image gameOverImg = gameOverT != null ? gameOverT.GetComponent<Image>() : null;
+        Image youWinImg = youWinT != null ? youWinT.GetComponent<Image>() : null;
 
         Color startColor = _gameOverPanel.color;
         startColor.a = 0f;
         _gameOverPanel.color = startColor;
+
+        // Fade the active message image along with the panel.
+        SetAlpha(gameOverImg, 0f);
+        SetAlpha(youWinImg, 0f);
 
         float elapsedTime = 0f;
         while(elapsedTime < _fadeTime)
@@ -157,36 +222,23 @@ public class GameManager : MonoBehaviour
             startColor.a = newAlpha;
             _gameOverPanel.color = startColor;
 
+            if (showWin)
+            {
+                SetAlpha(youWinImg, newAlpha);
+            }
+            else
+            {
+                SetAlpha(gameOverImg, newAlpha);
+            }
+
             yield return null;
+        }
+
+        if (_endScreenHoldTime > 0f)
+        {
+            yield return new WaitForSeconds(_endScreenHoldTime);
         }
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
-    private void FadeGame(Scene scene, LoadSceneMode mode)
-    {
-        StartCoroutine(FadeGameIn());
-    }
-
-    private IEnumerator FadeGameIn()
-    {
-        _gameOverPanel.gameObject.SetActive(true);
-        Color startColor = _gameOverPanel.color;
-        startColor.a = 1f;
-        _gameOverPanel.color = startColor;
-
-        float elapsedTime = 0f;
-        while(elapsedTime < _fadeTime)
-        {
-            elapsedTime += Time.deltaTime;
-
-            float newAlpha = Mathf.Lerp(1f, 0f, (elapsedTime / _fadeTime));
-            startColor.a = newAlpha;
-            _gameOverPanel.color = startColor;
-
-            yield return null;
-        }
-
-        _gameOverPanel.gameObject.SetActive(false);
     }
 }

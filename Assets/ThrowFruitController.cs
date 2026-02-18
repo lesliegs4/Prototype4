@@ -52,6 +52,11 @@ public class ThrowFruitController : MonoBehaviour
             Destroy(CurrentFruit);
 
             CanThrow = false;
+
+            if (GameManager.instance != null)
+            {
+                GameManager.instance.NotifyFruitPlacedInContainer();
+            }
         }
     }
 
