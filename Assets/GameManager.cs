@@ -17,6 +17,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float _fadeTime = 2f;
     [SerializeField] private float _endScreenHoldTime = 1.5f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource _audioSource;
+    [SerializeField] private AudioClip _gameOverSFX;
+    [SerializeField] private AudioClip _winSFX;
+
     public float TimeTillGameOver = 1.5f;
 
     private bool _hasPlacedFruitInContainer = false;
@@ -163,6 +168,9 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         if (_isEnding) return;
+        
+        if (_audioSource != null && _gameOverSFX != null) _audioSource.PlayOneShot(_gameOverSFX);
+
         _isEnding = true;
         StartCoroutine(ResetGame(showWin: false));
     }
@@ -170,6 +178,7 @@ public class GameManager : MonoBehaviour
     public void YouWin()
     {
         if (_isEnding) return;
+        if (_audioSource != null && _winSFX != null) _audioSource.PlayOneShot(_winSFX);
         _isEnding = true;
         StartCoroutine(ResetGame(showWin: true));
     }
