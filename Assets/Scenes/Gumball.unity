@@ -1447,6 +1447,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 197eb9240848141d692efd326aa0d6e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::KnobUIController
+  _lockToWorldPosition: 1
+  _knobWorldPosition: {x: -0.18, y: -2.96, z: 0}
+  _playScaleMultiplier: 1.1
   _animator: {fileID: 965643030}
   _image: {fileID: 965643031}
   _fallbackDurationSeconds: 0.5
@@ -2353,6 +2356,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   _moveSpeed: 5
+  _acceleration: 35
+  _deceleration: 55
   _boundaries: {fileID: 188866384}
   _fruitThrowTransform: {fileID: 1944226550}
 --- !u!120 &2062960588

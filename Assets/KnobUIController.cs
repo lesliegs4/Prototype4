@@ -10,6 +10,15 @@ public class KnobUIController : MonoBehaviour
 {
     public static KnobUIController instance;
 
+    [Header("Alignment")]
+    [SerializeField] private bool _lockToWorldPosition = true;
+    // Calibrated for this scene: where the knob center is in world units (orthographic camera).
+    // This keeps the overlay aligned across different build resolutions/aspect ratios.
+    [SerializeField] private Vector3 _knobWorldPosition = new Vector3(-0.18f, -2.96f, 0f);
+
+    [Header("Presentation")]
+    [SerializeField] private float _playScaleMultiplier = 1.15f;
+
     [SerializeField] private Animator _animator;
     [SerializeField] private Image _image;
 
@@ -18,6 +27,9 @@ public class KnobUIController : MonoBehaviour
 
     private Coroutine _playRoutine;
     private Color _playColor = Color.white;
+    private RectTransform _rt;
+    private RectTransform _canvasRT;
+    private Vector3 _baseScale = Vector3.one;
 
     private void Awake()
     {
@@ -33,6 +45,11 @@ public class KnobUIController : MonoBehaviour
 
         if (_animator == null) _animator = GetComponent<Animator>();
         if (_image == null) _image = GetComponent<Image>();
+        _rt = GetComponent<RectTransform>();
+        if (_rt != null) _baseScale = _rt.localScale;
+
+        Canvas canvas = GetComponentInParent<Canvas>();
+        _canvasRT = canvas != null ? canvas.transform as RectTransform : null;
 
         // Cache a sensible "visible" color for play. If the scene tint is fully transparent
         // (and often black), use white so the sprite isn't rendered as a black silhouette.
@@ -75,6 +92,7 @@ public class KnobUIController : MonoBehaviour
             _playRoutine = null;
         }
 
+        UpdateAlignment();
         Show();
 
         float duration = GetClipDurationSeconds();
@@ -163,6 +181,12 @@ public class KnobUIController : MonoBehaviour
 
     private void Show()
     {
+        if (_rt != null)
+        {
+            float mult = Mathf.Max(0.01f, _playScaleMultiplier);
+            _rt.localScale = _baseScale * mult;
+        }
+
         if (_image != null)
         {
             _image.color = _playColor;
@@ -170,10 +194,29 @@ public class KnobUIController : MonoBehaviour
         }
     }
 
+    private void UpdateAlignment()
+    {
+        if (!_lockToWorldPosition) return;
+        if (_rt == null || _canvasRT == null) return;
+
+        Camera cam = Camera.main;
+        if (cam == null) return;
+
+        Vector3 screen = cam.WorldToScreenPoint(_knobWorldPosition);
+        if (screen.z < 0f) return; // behind camera
+
+        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(_canvasRT, screen, null, out Vector2 localPoint))
+        {
+            // Assumes this UI element is anchored around the center (as it is in this scene).
+            _rt.anchoredPosition = localPoint;
+        }
+    }
+
     private void Hide()
     {
         if (_animator != null) _animator.enabled = false;
         if (_image != null) _image.enabled = false;
+        if (_rt != null) _rt.localScale = _baseScale;
     }
 }
 
