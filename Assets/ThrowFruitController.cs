@@ -48,6 +48,8 @@ public class ThrowFruitController : MonoBehaviour
 
             GameObject go = Instantiate(FruitSelector.instance.Fruits[index.Index], CurrentFruit.transform.position, rot);
             go.transform.SetParent(_parentAfterThrow);
+            
+            GameManager.instance.PlayDropSound();
 
             Destroy(CurrentFruit);
 

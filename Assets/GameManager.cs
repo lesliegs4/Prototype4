@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private AudioClip _gameOverSFX;
     [SerializeField] private AudioClip _winSFX;
+    [SerializeField] private AudioClip _dropSFX;
 
     public float TimeTillGameOver = 1.5f;
 
@@ -250,4 +251,18 @@ public class GameManager : MonoBehaviour
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+
+public void PlayDropSound()
+{
+    if (_audioSource != null && _dropSFX != null)
+    {
+        // Randomize pitch between 0.9 and 1.1 (standard is 1.0)
+        _audioSource.pitch = UnityEngine.Random.Range(0.9f, 1.1f);
+        _audioSource.PlayOneShot(_dropSFX);
+        
+        // Reset pitch so other sounds aren't affected
+        _audioSource.pitch = 1f; 
+    }
+}
+
 }
